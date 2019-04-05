@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,7 +11,6 @@ import 'package:sqflite/sqflite.dart';
 class DBProvider {
   DBProvider._();
   static final DBProvider db = DBProvider._();
-
   static Database _database;
 
   Future<Database> get database async {
@@ -23,16 +24,14 @@ class DBProvider {
 
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "TestDB.db");
-    return await openDatabase(path, version: 1, onOpen: (db) {},
-        onCreate: (Database db, int version) async {
-      await db.execute("CREATE TABLE Client ("
-          "id INTEGER PRIMARY KEY,"
-          "first_name TEXT,"
-          "last_name TEXT,"
-          "blocked BIT"
-          ")");
-    });
+    String path = join(documentsDirectory.path, "teste.db");
+    // Load database from asset and copy
+    ByteData data = await rootBundle.load(join('assets', 'aFriendlyReminder.db'));
+    List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+
+    // Save copied asset to documents
+    await new File(path).writeAsBytes(bytes);
+    return await openDatabase(path, version: 1, onOpen: (db) {});
   }
 
   newMedicine(Medicine newMedicine) async {
@@ -57,7 +56,7 @@ class DBProvider {
 
   getMedicine(int id) async {
     final db = await database;
-    var res = await db.query("Client", where: "id = ?", whereArgs: [id]);
+    var res = await db.query("Medicine", where: "id = ?", whereArgs: [id]);
     return res.isNotEmpty ? Medicine.fromJson(res.first) : null;
   }
 
@@ -75,7 +74,7 @@ class DBProvider {
 
   Future<List<Medicine>> getAllMedicine() async {
     final db = await database;
-    var res = await db.query("Client");
+    var res = await db.query("medicine");
     List<Medicine> list =
         res.isNotEmpty ? res.map((c) => Medicine.fromJson(c)).toList() : [];
     return list;

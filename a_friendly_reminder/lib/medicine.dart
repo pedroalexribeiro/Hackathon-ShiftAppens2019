@@ -14,7 +14,7 @@ String medicineToJson(Medicine data) {
 class Medicine{
     int id;
     String name;
-    Duration interval;
+    String interval;
 
     Medicine({
         this.id,
