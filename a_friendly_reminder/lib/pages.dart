@@ -21,28 +21,72 @@ class _MyHomePageState extends State<MyHomePage> {
         future: DBProvider.db.getAllMedicine(),
         builder: (BuildContext context, AsyncSnapshot<List<Medicine>> snapshot) {
           if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                Medicine item = snapshot.data[index];
-                return Dismissible(
-                  key: UniqueKey(),
-                  background: Container(color: Colors.red),
-                  onDismissed: (direction) {
-                    DBProvider.db.deleteMedicine(item.id);
-                  },
-                  child: ListTile(
-                    title: Text(item.name),
-                    leading: Text(item.id.toString()),
-                  ),
-                );
-              },
-            );
+            return buildMedicineList(snapshot);
           } else {
             return Center(child: CircularProgressIndicator());
           }
         },
       ),
+    );
+  }
+
+  Widget buildMedicineList(AsyncSnapshot<List<Medicine>> snap) {
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        Medicine item = snap.data[index];
+        return Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding:
+                      const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 6.0),
+                      child: Text(
+                        item.name,
+                        style: TextStyle(
+                            fontSize: 22.0, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                      const EdgeInsets.fromLTRB(12.0, 6.0, 12.0, 12.0),
+                      child: Text(
+                        "Take in cycles of " + item.interval,
+                        style: TextStyle(fontSize: 18.0),
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.star_border,
+                          size: 35.0,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Divider(
+              height: 2.0,
+              color: Colors.grey,
+            )
+          ],
+        );
+      },
+      itemCount: snap.data.length,
     );
   }
 }
