@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:a_friendly_reminder/widgets.dart';
-import 'package:a_friendly_reminder/medicine_model.dart';
+import 'package:a_friendly_reminder/medicine.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -11,50 +10,100 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _medicineLst = <Medicine>[];
+  List<Medicine> medicines;
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _buildMedicineList(),
+            new Expanded(
+              child: buildMedicineList(),
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMedicineList() {
-  return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
+  Widget buildMedicineList() {
+    //return new Text("welp");
+    return new ListView.builder(
+      itemCount: 2,
       itemBuilder: (context, int index) {
         return new ListTile(
-          title: new Text("Title"),
+          leading: new CircleAvatar(
+            child: new Text("p"),
+          ),
+          title: new Text("data"),
         );
       },
     );
-  }
-
-  Widget _buildRow(Medicine medicine) {
-  return ListTile(
-    title: Text(medicine.name,
-    ),
-  );
+    /*
+    return ListView.builder(
+      itemBuilder: (context, position) {
+        return Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding:
+                      const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 6.0),
+                      child: Text(
+                        medicines[position].name,
+                        style: TextStyle(
+                            fontSize: 22.0, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                      const EdgeInsets.fromLTRB(12.0, 6.0, 12.0, 12.0),
+                      child: Text(
+                        medicines[position].interval.toString(),
+                        style: TextStyle(fontSize: 18.0),
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text(
+                        "5m",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.star_border,
+                          size: 35.0,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Divider(
+              height: 2.0,
+              color: Colors.grey,
+            )
+          ],
+        );
+      },
+      itemCount: (medicines == null ? 0 : medicines.length),
+    );*/
   }
 }
