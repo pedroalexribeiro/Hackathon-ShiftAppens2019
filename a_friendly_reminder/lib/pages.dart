@@ -1,41 +1,26 @@
-import 'dart:io';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_mobile_vision/flutter_mobile_vision.dart';
 import 'package:a_friendly_reminder/medicine.dart';
 import 'package:a_friendly_reminder/db_provider.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:a_friendly_reminder/ocr.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.cameras}) : super(key: key);
+  MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
-  final List<CameraDescription> cameras;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _cameraOcr = FlutterMobileVision.CAMERA_BACK;
-  bool _autoFocusOcr = true;
-  bool _torchOcr = false;
-  bool _multipleOcr = false;
-  bool _waitTapOcr = false;
-  bool _showTextOcr = true;
-  Size _previewOcr;
-  List<OcrText> _textsOcr = [];
-  CameraController controller;
   String imagePath;
-  String videoPath;
   List<Medicine> medicines;
 
   @override
   void initState() {
     super.initState();
-    initCamera(widget.cameras[0]);
-    FlutterMobileVision.start().then((x) => setState(() {}));
   }
 
   @override
@@ -128,11 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               new Expanded(
                 child: new RaisedButton(
-                  onPressed:  controller != null &&
-                              controller.value.isInitialized &&
-                              !controller.value.isRecordingVideo
-                              ? onTakePictureButtonPressed
-                              : null,
+                  onPressed: getImage,
                   color: Color(0xff9b3d3d),
                   elevation: 0.0,
                   child: new Column(
@@ -226,91 +207,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<String> takePicture() async {
-    if (!controller.value.isInitialized) {
-      //showInSnackBar('Error: select a camera first.');
-      return null;
-    }
-    final Directory extDir = await getApplicationDocumentsDirectory();
-    final String dirPath = '${extDir.path}/Pictures/flutter_test';
-    await Directory(dirPath).create(recursive: true);
-    final String filePath = '$dirPath/${timestamp()}.jpg';
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
 
-    if (controller.value.isTakingPicture) {
-      // A capture is already pending, do nothing.
-      return null;
-    }
-
-    try {
-      await controller.takePicture(filePath);
-    } on CameraException catch (e) {
-      _showCameraException(e);
-      return null;
-    }
-    return filePath;
-  }
-
-  void onTakePictureButtonPressed() {
-    takePicture().then((String filePath) {
-      if (mounted) {
-        setState(() {
-          imagePath = filePath;
-        });
-        //if (filePath != null) showInSnackBar('Picture saved to $filePath');
-      }
-    });
-  }
-
-  Future<Null> _read() async {
-    List<OcrText> texts = [];
-    try {
-      texts = await FlutterMobileVision.read(
-        flash: _torchOcr,
-        autoFocus: _autoFocusOcr,
-        multiple: _multipleOcr,
-        waitTap: _waitTapOcr,
-        showText: _showTextOcr,
-        preview: _previewOcr,
-        camera: _cameraOcr,
-        fps: 2.0,
+    Navigator.push(
+        context,
+        new MaterialPageRoute(builder: (context) => DetailWidget(image)),
       );
-    } on Exception {
-      texts.add(new OcrText('Failed to recognize text.'));
-    }
-
-    if (!mounted) return;
-
-    setState(() => _textsOcr = texts);
-  }
-
-  void initCamera(CameraDescription cameraDescription) async {
-    if (controller != null) {
-      await controller.dispose();
-    }
-    controller = CameraController(cameraDescription, ResolutionPreset.high);
-
-    // If the controller is updated then update the UI.
-    controller.addListener(() {
-      if (mounted) setState(() {});
-      if (controller.value.hasError) {
-        //showInSnackBar('Camera error ${controller.value.errorDescription}');
-      }
-    });
-
-    try {
-      await controller.initialize();
-    } on CameraException catch (e) {
-      _showCameraException(e);
-    }
-
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  void _showCameraException(CameraException e) {
-    logError(e.code, e.description);
-    //showInSnackBar('Error: ${e.code}\n${e.description}');
   }
 
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();

@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "591605233411",
+    "firebase_url": "https://a-friendly-reminder.firebaseio.com",
+    "project_id": "a-friendly-reminder",
+    "storage_bucket": "a-friendly-reminder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591605233411:android:b1dd8d56c2121889",
+        "android_client_info": {
+          "package_name": "com.example.a_friendly_reminder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKmpLvBihVLqEC151_m58KhmBrMmy2UUo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "591605233411-c8fqe2ene3ojqeicp3n5at85148n8f60.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
