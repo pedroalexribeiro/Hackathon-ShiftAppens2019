@@ -1,7 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:a_friendly_reminder/pages.dart';
+import 'package:camera/camera.dart';
 
-main(){
+List<CameraDescription> cameras;
+
+Future<void> main() async{
+  cameras = await availableCameras();
   runApp(MyApp());
 }
 
@@ -14,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'A Friendly Reminder'),
+      home: MyHomePage(title: 'A Friendly Reminder', cameras: cameras),
     );
   }
 }
