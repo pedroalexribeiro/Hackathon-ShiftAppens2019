@@ -35,6 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     initCamera(widget.cameras[0]);
+    FlutterMobileVision.start().then((x) => setState(() {}));
   }
 
   @override
