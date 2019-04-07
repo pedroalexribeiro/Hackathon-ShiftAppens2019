@@ -27,13 +27,13 @@ class DBProvider {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, "teste.db");
     // Load database from asset and copy
-    //if (FileSystemEntity.typeSync(path) == FileSystemEntityType.notFound){
+    if (FileSystemEntity.typeSync(path) == FileSystemEntityType.notFound){
       ByteData data = await rootBundle.load(join('assets', 'aFriendlyReminder.db'));
       List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
       // Save copied asset to documents
       await new File(path).writeAsBytes(bytes);
-    //}
+    }
     return await openDatabase(path, version: 1, onOpen: (db) {});
   }
 
@@ -92,6 +92,20 @@ class DBProvider {
     var res = await db.rawQuery("SELECT medicine.*, user_medicines.img FROM medicine INNER JOIN user_medicines ON (medicine.id=user_medicines.id_medicine);");
     List<Medicine> list =
         res.isNotEmpty ? res.map((c) => Medicine.fromJson(c)).toList() : [];
+    return list;
+  }
+
+  Future<List<String>> getDos(int id) async{
+    final db = await database;
+    var res = await db.rawQuery("SELECT dos.do FROM dos INNER JOIN medicine_dos ON (medicine_dos.id_medicine = " + id.toString() +" AND dos.id = medicine_dos.id_do);");
+    List<String> list = res.isNotEmpty ? res.map((c) => c.toString()).toList() : [];
+    return list;
+  }
+
+  Future<List<String>> getDonts(int id) async{
+    final db = await database;
+    var res = await db.rawQuery("SELECT donts.dont FROM donts INNER JOIN medicine_donts ON (medicine_donts.id_medicine = " + id.toString() +" AND donts.id = medicine_donts.id_dont);");
+    List<String> list = res.isNotEmpty ? res.map((c) => c.toString()).toList() : [];
     return list;
   }
 

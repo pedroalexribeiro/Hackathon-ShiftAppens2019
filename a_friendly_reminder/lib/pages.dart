@@ -43,7 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
           if (snapshot.hasData) {
             return buildMedicineList(snapshot);
           } else {
-            return Center(child: CircularProgressIndicator());
+            return new Container(
+              decoration: new BoxDecoration(color: Color(0xffefdfbb)),
+              child: Center(child: CircularProgressIndicator()),
+            );
           }
         },
       ),
@@ -153,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       new Padding(
                         padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 16.0),
                         child: new Text(
-                          'Camera',
+                          'Adicionar Medicamento',
                           style: new TextStyle(
                             fontSize: 22.0,
                             color: Color(0xffefdfbb),
@@ -164,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
-              new Expanded(
+              /*new Expanded(
                 child: new RaisedButton(
                   onPressed: () {},
                     color: Color(0xff7e482a),
@@ -194,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
-              ),
+              ),*/
             ],
           ),
         )
@@ -281,42 +284,201 @@ class _MedicinePage extends State<MedicinePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffefdfbb),
-      body: new Column(
-        children: <Widget>[
-          new Row(
-            children: <Widget>[
-              new Expanded(
-                child: new Image.file(
-                  new File(widget.medicine.img),
-                  fit: BoxFit.cover,
-                ),
+      body: FutureBuilder<List<List<String>>>(
+        future: getDoAndDonts(widget.medicine.id),
+        builder: (BuildContext context, AsyncSnapshot<List<List<String>>> snapshot){
+          //if(snapshot.hasData){
+           // return buildMedicineWithInfo(snapshot);
+          //}
+          //else{
+            return buildMedicine();
+          //}
+        }
+      ),
+      bottomNavigationBar: buildBottomNavbar(),
+    );
+  }
+
+  Widget buildMedicine(){
+    return new Column(
+      children: <Widget>[
+        new Row(
+          children: <Widget>[
+            new Expanded(
+              child: new Image.file(
+                new File(widget.medicine.img),
+                fit: BoxFit.cover,
               ),
-            ],
-          ),
-          new Row(
-            children: <Widget>[
-              new Padding(
-                padding: new EdgeInsets.all(16.0),
-                child: new Text(
-                  widget.medicine.name,
-                  style: new TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-              )
-            ],
-          ),
-          new Row(
-            children: <Widget>[
-              new Padding(
-                padding: new EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 0.0),
-                child: new Text(
-                  'Take in cycles of ' + widget.medicine.interval,
-                  style: new TextStyle(fontSize: 18),
-                ),
-              )
-            ],
-          ),
+            ),
+          ],
+        ),
+        new Row(
+          children: <Widget>[
+            new Padding(
+              padding: new EdgeInsets.all(16.0),
+              child: new Text(
+                widget.medicine.name,
+                style: new TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+            )
+          ],
+        ),
+        new Row(
+          children: <Widget>[
+            new Padding(
+              padding: new EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 0.0),
+              child: new Text(
+                'Take in cycles of ' + widget.medicine.interval,
+                style: new TextStyle(fontSize: 18),
+              ),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget buildMedicineWithInfo(AsyncSnapshot<List<List<String>>> snap){
+    return new Column(
+      children: <Widget>[
+        new Row(
+          children: <Widget>[
+            new Expanded(
+              child: new Image.file(
+                new File(widget.medicine.img),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ]
+        ),
+        new Row(
+          children: <Widget>[
+          new Padding(
+            padding: new EdgeInsets.all(16.0),
+            child: new Text(
+              widget.medicine.name,
+              style: new TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+          )
         ],
       ),
+      new Row(
+        children: <Widget>[
+          new Padding(
+            padding: new EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 0.0),
+            child: new Text(
+              'Take in cycles of ' + widget.medicine.interval,
+              style: new TextStyle(fontSize: 18),
+              ),
+            )
+          ],
+        ),
+      new Column(
+        children: <Widget>[
+          new ListView.builder(
+          itemBuilder: (context, index){
+            new Text(index == 0 ? "Coisas boas" : "Coisas mas");
+            List<String> dos = snap.data[index];
+            return new Container(
+              child:
+                new Text(dos.toString()),
+            );
+          },
+          itemCount: snap.data.length,
+        ),
+        ],
+      )
+    ]);
+  }
+
+  Future<List<List<String>>> getDoAndDonts(int id) async{
+    List<List<String>> all = new List(2);
+    all[0] = await DBProvider.db.getDos(id);
+    all[1] = await DBProvider.db.getDonts(id);
+    return all;
+  }
+
+  Widget buildBottomNavbar() {
+    return new BottomAppBar(
+        child: new Container(
+          decoration: new BoxDecoration(
+              color: Color(0xff7e482a),
+              border: new Border(
+                  top: BorderSide(
+                      color: Color(0xff5D351C),
+                      width: 8
+                  )
+              )
+          ),
+          child: new Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              new Expanded(
+                child: new RaisedButton(
+                  onPressed:  () {Navigator.pop(context);},
+                  color: Color(0xff7e482a),
+                  elevation: 0.0,
+                  child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      new Padding(
+                        padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
+                        child: new Icon(
+                          Icons.arrow_back,
+                          size: 52,
+                          color: Color(0xffefdfbb),
+                        ),
+                      ),
+                      new Padding(
+                        padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 16.0),
+                        child: new Text(
+                          'Voltar ao início',
+                          style: new TextStyle(
+                            fontSize: 22.0,
+                            color: Color(0xffefdfbb),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              /*new Expanded(
+                child: new RaisedButton(
+                  onPressed: () {},
+                    color: Color(0xff7e482a),
+                  elevation: 0.0,
+                  child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      new Padding(
+                        padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
+                        child: new Icon(
+                          Icons.build,
+                          size: 52,
+                          color: Color(0xffefdfbb),
+                        ),
+                      ),
+                      new Padding(
+                        padding: const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 16.0),
+                        child: new Text(
+                          'Settings',
+                          style: new TextStyle(
+                            fontSize: 22.0,
+                            color: Color(0xffefdfbb),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),*/
+            ],
+          ),
+        )
     );
   }
 }

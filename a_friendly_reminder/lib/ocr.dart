@@ -69,7 +69,62 @@ class _DetailState extends State<DetailWidget> {
         builder: (BuildContext context, AsyncSnapshot<Medicine> snapshot){
           if(snapshot.hasData){
             if(snapshot.data.id == -1){
-              return new Text("Nao conseguimos encontrar nenhum medicamento com esse nome, por favor tente outra vez");
+              return new Container(
+                  decoration: new BoxDecoration(
+                      color: Color(0xffefdfbb)
+                  ),
+                  child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Row(
+                        children: <Widget>[
+                          new Expanded(
+                            child: new Center(
+                              child: new Padding(
+                                padding: new EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 0.0),
+                                child: new Text(
+                                  'Não conseguimos encontrar nenhum medicamento com esse nome, por favor tente novamente',
+                                  style: new TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      new Row(
+                        children: <Widget>[
+                          new Expanded(
+                            child: new Center(
+                              child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(32.0, 64.0, 32.0, 0.0),
+                                  child: new SizedBox(
+                                    width: double.infinity,
+                                    height: 128,
+                                    child: new RaisedButton(
+                                      color: Color(0xff7e482a),
+                                      child: new Text(
+                                        'Voltar ao início',
+                                        style: new TextStyle(
+                                          color: Color(0xffefdfbb),
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  )
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  )
+              );
             }else{
               return new Container(
                 decoration: new BoxDecoration(
@@ -133,7 +188,10 @@ class _DetailState extends State<DetailWidget> {
               );
             }
           }else{
-            return Center(child: CircularProgressIndicator());
+            return new Container(
+              decoration: new BoxDecoration(color: Color(0xffefdfbb)),
+              child: Center(child: CircularProgressIndicator()),
+            );
           }
         }
       )
