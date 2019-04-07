@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:a_friendly_reminder/medicine.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBProvider {
@@ -36,17 +37,23 @@ class DBProvider {
     return await openDatabase(path, version: 1, onOpen: (db) {});
   }
 
-  Future<int> newMedicine(Medicine newMedicine, var time) async {
+  Future<int> newMedicine(Medicine newMedicine, var time, FlutterLocalNotificationsPlugin pulgin) async {
     final db = await database;
     //get the biggest id in the table
-    //var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM user_medicines");
+    //var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM usercontext_medicines");
     //int id = table.first["id"];
     //insert to the table using the new id
-    var raw = await db.rawInsert(
+    var checkMed = await db.rawQuery("SELECT * FROM user_medicines WHERE (user_medicines.id_medicine = " + newMedicine.id.toString() + " );");
+    if(checkMed.isEmpty){
+      var raw = await db.rawInsert(
         "INSERT Into user_medicines (id_medicine,id_user,start_time,interval)"
         " VALUES (?,?,?,?)",
         [newMedicine.id, 1, time.toString(), newMedicine.interval]);
-    return raw;
+
+      startNotification(newMedicine, pulgin);
+      return raw;
+    }
+    return -1;
   }
 
   updateMedicine(Medicine newMedicine) async {
@@ -96,5 +103,18 @@ class DBProvider {
   deleteAll() async {
     final db = await database;
     db.rawDelete("Delete * from Client");
+  }
+
+  void startNotification(Medicine med, FlutterLocalNotificationsPlugin pulgin) async{
+    var time = new Time(0, 0, 5);
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails('repeatDailyAtTime channel id', 'repeatDailyAtTime channel name', 'repeatDailyAtTime description');
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await pulgin.showDailyAtTime(
+        0,
+        'Take your pills',
+        'Daily notification shown at approximately}',
+        time,
+        platformChannelSpecifics);
   }
 }

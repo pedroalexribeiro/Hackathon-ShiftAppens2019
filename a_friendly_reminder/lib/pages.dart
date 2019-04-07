@@ -5,6 +5,12 @@ import 'package:a_friendly_reminder/medicine.dart';
 import 'package:a_friendly_reminder/db_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:a_friendly_reminder/ocr.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:a_friendly_reminder/notification.dart';
+import 'package:flutter/cupertino.dart';
+
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -21,6 +27,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    var initializationSettingsAndroid = new AndroidInitializationSettings('app_icon');
+    var initializationSettingsIOS = new IOSInitializationSettings(onDidReceiveLocalNotification: onDidRecieveLocationLocation);
+    var initializationSettings = new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings, onSelectNotification: onSelectNotification);
   }
 
   @override
@@ -215,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => DetailWidget(image)),
+      new MaterialPageRoute(builder: (context) => DetailWidget(image, flutterLocalNotificationsPlugin)),
     );
   }
 
@@ -229,6 +240,43 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => MedicinePage(medicine: item,)),
+    );
+  }
+
+  Future onDidRecieveLocationLocation(int id, String title, String body, String payload) async {
+    // display a dialog with the notification details, tap ok to go to another page
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(body),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: Text('Ok'),
+            onPressed: () async {
+              Navigator.of(context, rootNavigator: true).pop();
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NotificationPage(),
+                ),
+              );
+            },
+          )
+        ],
+      )
+    );
+  }
+
+  Future onSelectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => NotificationPage()),
     );
   }
 }

@@ -3,15 +3,16 @@ import 'dart:io';
 import 'dart:async';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:a_friendly_reminder/db_provider.dart';
 import 'package:a_friendly_reminder/medicine.dart';
-import 'package:a_friendly_reminder/pages.dart';
 
 class DetailWidget extends StatefulWidget  {
 
   final File _file;
+  final FlutterLocalNotificationsPlugin pulgin;
 
-  DetailWidget(this._file);
+  DetailWidget(this._file, this.pulgin);
 
   @override
   State<StatefulWidget> createState() {
@@ -85,8 +86,8 @@ class _DetailState extends State<DetailWidget> {
                           onChanged: (time) {
                             print('change $time');
                           }, onConfirm: (time) {
-                            DBProvider.db.newMedicine(snapshot.data, time);
-                              Navigator.pop(context);
+                            DBProvider.db.newMedicine(snapshot.data, time, widget.pulgin);
+                            Navigator.pop(context);
                           }, currentTime: DateTime.now(), locale: LocaleType.pt);
                       },
                     )
