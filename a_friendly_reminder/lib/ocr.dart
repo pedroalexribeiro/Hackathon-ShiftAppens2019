@@ -68,32 +68,65 @@ class _DetailState extends State<DetailWidget> {
         future: verifyError(),
         builder: (BuildContext context, AsyncSnapshot<Medicine> snapshot){
           if(snapshot.hasData){
-            return new Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                new Row(
-                  children: <Widget>[
-                    new Text('A que horas quer começar a tomar?'),
-                  ],
-                ),
-                new Row(
-                  children: <Widget>[
-                    new RaisedButton(
-                      child: new Text('Definir alarme'),
-                      onPressed: () {
-                        DatePicker.showTimePicker(context,
-                          showTitleActions: true,
-                          onChanged: (time) {
-                            print('change $time');
-                          }, onConfirm: (time) {
-                            DBProvider.db.newMedicine(snapshot.data, time, widget.pulgin);
-                            Navigator.pop(context);
-                          }, currentTime: DateTime.now(), locale: LocaleType.pt);
-                      },
-                    )
-                  ],
-                )
-              ],
+            return new Container(
+              decoration: new BoxDecoration(
+                color: Color(0xffefdfbb)
+              ),
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Row(
+                    children: <Widget>[
+                      new Expanded(
+                        child: new Center(
+                          child: new Text(
+                            'A que horas quer começar a tomar?',
+                            style: new TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  new Row(
+                    children: <Widget>[
+                      new Expanded(
+                        child: new Center(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(32.0, 64.0, 32.0, 0.0),
+                            child: new SizedBox(
+                              width: double.infinity,
+                              height: 128,
+                              child: new RaisedButton(
+                                color: Color(0xff7e482a),
+                                child: new Text(
+                                  'Definir alarme',
+                                  style: new TextStyle(
+                                    color: Color(0xffefdfbb),
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  DatePicker.showTimePicker(context,
+                                      showTitleActions: true,
+                                      onChanged: (time) {
+                                        print('change $time');
+                                      }, onConfirm: (time) {
+                                        DBProvider.db.newMedicine(snapshot.data, time, widget.pulgin, widget._file.path);
+                                        Navigator.pop(context);
+                                      }, currentTime: DateTime(0, 0, 0, 20), locale: LocaleType.pt);
+                                },
+                              ),
+                            )
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              )
             );
           }else{
             return Center(child: CircularProgressIndicator());

@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget buildMedicineList(AsyncSnapshot<List<Medicine>> snap) {
     return new Container(
-      decoration: new BoxDecoration(color: Color(0xfff5f6f1)),
+      decoration: new BoxDecoration(color: Color(0xffefdfbb),),
       child: ListView.builder(
         itemBuilder: (context, index) {
           Medicine item = snap.data[index];
@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: new Icon(
                               Icons.info,
                               size: 35.0,
-                              color: Color(0xff9b3d3d),
+                              color: Color(0xff7e482a),
                             ),
                           ),
                         ],
@@ -120,7 +120,15 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildBottomNavbar() {
     return new BottomAppBar(
         child: new Container(
-          decoration: new BoxDecoration(color: Color(0xff9b3d3d)),
+          decoration: new BoxDecoration(
+            color: Color(0xff7e482a),
+            border: new Border(
+              top: BorderSide(
+                color: Color(0xff5D351C),
+                width: 8
+              )
+            )
+          ),
           child: new Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -128,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
               new Expanded(
                 child: new RaisedButton(
                   onPressed:  getImage,
-                  color: Color(0xff9b3d3d),
+                  color: Color(0xff7e482a),
                   elevation: 0.0,
                   child: new Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -139,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: new Icon(
                           Icons.photo_camera,
                           size: 52,
-                          color: Color(0xfff5f6f1),
+                          color: Color(0xffefdfbb),
                         ),
                       ),
                       new Padding(
@@ -148,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           'Camera',
                           style: new TextStyle(
                             fontSize: 22.0,
-                            color: Color(0xfff5f6f1),
+                            color: Color(0xffefdfbb),
                           ),
                         ),
                       )
@@ -159,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
               new Expanded(
                 child: new RaisedButton(
                   onPressed: () {},
-                    color: Color(0xff9b3d3d),
+                    color: Color(0xff7e482a),
                   elevation: 0.0,
                   child: new Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -170,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: new Icon(
                           Icons.build,
                           size: 52,
-                          color: Color(0xfff5f6f1),
+                          color: Color(0xffefdfbb),
                         ),
                       ),
                       new Padding(
@@ -179,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           'Settings',
                           style: new TextStyle(
                             fontSize: 22.0,
-                            color: Color(0xfff5f6f1),
+                            color: Color(0xffefdfbb),
                           ),
                         ),
                       )

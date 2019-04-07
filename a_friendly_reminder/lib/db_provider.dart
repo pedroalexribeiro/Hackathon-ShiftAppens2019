@@ -27,17 +27,17 @@ class DBProvider {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, "teste.db");
     // Load database from asset and copy
-    if (FileSystemEntity.typeSync(path) == FileSystemEntityType.notFound){
+    //if (FileSystemEntity.typeSync(path) == FileSystemEntityType.notFound){
       ByteData data = await rootBundle.load(join('assets', 'aFriendlyReminder.db'));
       List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
       // Save copied asset to documents
       await new File(path).writeAsBytes(bytes);
-    }
+    //}
     return await openDatabase(path, version: 1, onOpen: (db) {});
   }
 
-  Future<int> newMedicine(Medicine newMedicine, var time, FlutterLocalNotificationsPlugin pulgin) async {
+  Future<int> newMedicine(Medicine newMedicine, var time, FlutterLocalNotificationsPlugin pulgin, String path) async {
     final db = await database;
     //get the biggest id in the table
     //var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM usercontext_medicines");
@@ -46,9 +46,9 @@ class DBProvider {
     var checkMed = await db.rawQuery("SELECT * FROM user_medicines WHERE (user_medicines.id_medicine = " + newMedicine.id.toString() + " );");
     if(checkMed.isEmpty){
       var raw = await db.rawInsert(
-        "INSERT Into user_medicines (id_medicine,id_user,start_time,interval)"
-        " VALUES (?,?,?,?)",
-        [newMedicine.id, 1, time.toString(), newMedicine.interval]);
+        "INSERT Into user_medicines (id_medicine,id_user,start_time,interval, img)"
+        " VALUES (?,?,?,?,?)",
+        [newMedicine.id, 1, time.toString(), newMedicine.interval, path]);
 
       startNotification(newMedicine, pulgin);
       return raw;
