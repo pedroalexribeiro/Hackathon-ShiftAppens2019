@@ -71,7 +71,7 @@ class DBProvider {
 
   Future<Medicine> getMedicineByName(String name) async{
     final db = await database;
-    var res = await db.rawQuery("SELECT * FROM medicine WHERE name LIKE '" + name + "%'");
+    var res = await db.rawQuery("SELECT * FROM medicine WHERE name LIKE '" + name + "'");
     return res.isNotEmpty ? Medicine.fromJson(res.first) : null;
   }
 
@@ -89,7 +89,7 @@ class DBProvider {
 
   Future<List<Medicine>> getAllMedicine() async {
     final db = await database;
-    var res = await db.rawQuery("SELECT medicine.* FROM medicine INNER JOIN user_medicines ON (medicine.id=user_medicines.id_medicine);");
+    var res = await db.rawQuery("SELECT medicine.*, user_medicines.img FROM medicine INNER JOIN user_medicines ON (medicine.id=user_medicines.id_medicine);");
     List<Medicine> list =
         res.isNotEmpty ? res.map((c) => Medicine.fromJson(c)).toList() : [];
     return list;

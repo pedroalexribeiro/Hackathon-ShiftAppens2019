@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:a_friendly_reminder/medicine.dart';
 import 'package:a_friendly_reminder/db_provider.dart';
@@ -195,34 +195,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
-
-              /*
-          new Expanded(
-            child: new RaisedButton(
-              elevation: 0.0,
-              splashColor: Colors.pinkAccent,
-              color: Colors.white,
-              child:
-              new Text(
-                "Camera",
-                style: new TextStyle(fontSize: 20.0, color: Colors.black),
-              ),
-              onPressed: () {},
-            ),
-          ),
-          new Expanded(
-            child: new RaisedButton(
-              elevation: 0.0,
-              splashColor: Colors.pinkAccent,
-              color: Colors.white,
-              child: new Text(
-                "Settings",
-                style: new TextStyle(fontSize: 20.0, color: Colors.black),
-              ),
-              onPressed: () {},
-            ),
-          ),
-          */
             ],
           ),
         )
@@ -308,13 +280,14 @@ class _MedicinePage extends State<MedicinePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffefdfbb),
       body: new Column(
         children: <Widget>[
           new Row(
             children: <Widget>[
               new Expanded(
-                child: new Image.network(
-                  'https://www.farmaciacalvario.com/uploads/8168617.jpg',
+                child: new Image.file(
+                  new File(widget.medicine.img),
                   fit: BoxFit.cover,
                 ),
               ),
