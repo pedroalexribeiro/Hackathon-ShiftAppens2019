@@ -46,56 +46,59 @@ class _MyHomePageState extends State<MyHomePage> {
       child: ListView.builder(
         itemBuilder: (context, index) {
           Medicine item = snap.data[index];
-          return new Column(
-            children: <Widget>[
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  new Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      new Padding(
-                        padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 6.0),
-                        child: new Text(
-                          item.name,
-                          style: new TextStyle(
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                      ),
-                      new Padding(
-                        padding: const EdgeInsets.fromLTRB(12.0, 6.0, 12.0, 12.0),
-                        child: new Text(
-                          "Take in cycles of " + item.interval,
-                          style: new TextStyle(fontSize: 18.0),
-                        ),
-                      ),
-                    ],
-                  ),
-                  new Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: new Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          return InkWell(
+            child: new Column(
+              children: <Widget>[
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         new Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: new Icon(
-                            Icons.star_border,
-                            size: 35.0,
-                            color: Colors.grey,
+                          padding: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 6.0),
+                          child: new Text(
+                            item.name,
+                            style: new TextStyle(
+                                fontSize: 22.0,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                        new Padding(
+                          padding: const EdgeInsets.fromLTRB(12.0, 6.0, 12.0, 12.0),
+                          child: new Text(
+                            "Take in cycles of " + item.interval,
+                            style: new TextStyle(fontSize: 18.0),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              new Divider(
-                height: 2.0,
-                color: Colors.grey,
-              )
-            ],
+                    new Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          new Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: new Icon(
+                              Icons.info,
+                              size: 35.0,
+                              color: Color(0xff9b3d3d),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                new Divider(
+                  height: 2.0,
+                  color: Colors.grey,
+                )
+              ],
+            ),
+            onTap: () => itemClick(item),
           );
         },
         itemCount: snap.data.length,
@@ -113,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               new Expanded(
                 child: new RaisedButton(
-                  onPressed: getImage,
+                  onPressed:  getImage,
                   color: Color(0xff9b3d3d),
                   elevation: 0.0,
                   child: new Column(
@@ -145,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
               new Expanded(
                 child: new RaisedButton(
                   onPressed: () {},
-                  color: Color(0xff9b3d3d),
+                    color: Color(0xff9b3d3d),
                   elevation: 0.0,
                   child: new Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -154,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       new Padding(
                         padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
                         child: new Icon(
-                          Icons.settings,
+                          Icons.build,
                           size: 52,
                           color: Color(0xfff5f6f1),
                         ),
@@ -211,13 +214,80 @@ class _MyHomePageState extends State<MyHomePage> {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
 
     Navigator.push(
-        context,
-        new MaterialPageRoute(builder: (context) => DetailWidget(image)),
-      );
+      context,
+      new MaterialPageRoute(builder: (context) => DetailWidget(image)),
+    );
   }
 
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
   void logError(String code, String message) =>
-    print('Error: $code\nError Message: $message');
+      print('Error: $code\nError Message: $message');
+
+
+  void itemClick(Medicine item) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MedicinePage(medicine: item,)),
+    );
+  }
+}
+
+
+class MedicinePage extends StatefulWidget {
+  MedicinePage({Key key, this.medicine}) : super(key: key);
+  final Medicine medicine;
+
+  @override
+  _MedicinePage createState() => _MedicinePage();
+}
+
+class _MedicinePage extends State<MedicinePage> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: new Column(
+        children: <Widget>[
+          new Row(
+            children: <Widget>[
+              new Expanded(
+                child: new Image.network(
+                  'https://www.farmaciacalvario.com/uploads/8168617.jpg',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ],
+          ),
+          new Row(
+            children: <Widget>[
+              new Padding(
+                padding: new EdgeInsets.all(16.0),
+                child: new Text(
+                  widget.medicine.name,
+                  style: new TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              )
+            ],
+          ),
+          new Row(
+            children: <Widget>[
+              new Padding(
+                padding: new EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 0.0),
+                child: new Text(
+                  'Take in cycles of ' + widget.medicine.interval,
+                  style: new TextStyle(fontSize: 18),
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }

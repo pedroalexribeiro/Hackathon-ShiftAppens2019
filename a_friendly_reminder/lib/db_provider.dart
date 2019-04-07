@@ -26,24 +26,26 @@ class DBProvider {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, "teste.db");
     // Load database from asset and copy
-    ByteData data = await rootBundle.load(join('assets', 'aFriendlyReminder.db'));
-    List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    if (FileSystemEntity.typeSync(path) == FileSystemEntityType.notFound){
+      ByteData data = await rootBundle.load(join('assets', 'aFriendlyReminder.db'));
+      List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
-    // Save copied asset to documents
-    await new File(path).writeAsBytes(bytes);
+      // Save copied asset to documents
+      await new File(path).writeAsBytes(bytes);
+    }
     return await openDatabase(path, version: 1, onOpen: (db) {});
   }
 
-  newMedicine(Medicine newMedicine) async {
+  Future<int> newMedicine(Medicine newMedicine, var time) async {
     final db = await database;
     //get the biggest id in the table
-    var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM Client");
-    int id = table.first["id"];
+    //var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM user_medicines");
+    //int id = table.first["id"];
     //insert to the table using the new id
     var raw = await db.rawInsert(
-        "INSERT Into Client (id,first_name,last_name,blocked)"
+        "INSERT Into user_medicines (id_medicine,id_user,start_time,interval)"
         " VALUES (?,?,?,?)",
-        [id, newMedicine.name, newMedicine.interval]);
+        [newMedicine.id, 1, time.toString(), newMedicine.interval]);
     return raw;
   }
 
@@ -57,6 +59,12 @@ class DBProvider {
   getMedicine(int id) async {
     final db = await database;
     var res = await db.query("Medicine", where: "id = ?", whereArgs: [id]);
+    return res.isNotEmpty ? Medicine.fromJson(res.first) : null;
+  }
+
+  Future<Medicine> getMedicineByName(String name) async{
+    final db = await database;
+    var res = await db.rawQuery("SELECT * FROM medicine WHERE name LIKE '" + name + "%'");
     return res.isNotEmpty ? Medicine.fromJson(res.first) : null;
   }
 
@@ -74,7 +82,7 @@ class DBProvider {
 
   Future<List<Medicine>> getAllMedicine() async {
     final db = await database;
-    var res = await db.query("medicine");
+    var res = await db.rawQuery("SELECT medicine.* FROM medicine INNER JOIN user_medicines ON (medicine.id=user_medicines.id_medicine);");
     List<Medicine> list =
         res.isNotEmpty ? res.map((c) => Medicine.fromJson(c)).toList() : [];
     return list;

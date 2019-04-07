@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:a_friendly_reminder/pages.dart';
 
-main(){
+Future<void> main() async{
   runApp(MyApp());
 }
 
